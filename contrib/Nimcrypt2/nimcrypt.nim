@@ -724,7 +724,7 @@ when defined(windows):
         discard os.execShellCmd(fmt"rm {outfile}")
     if verbose == true:
         if llvm_obfuscator == false:
-            discard os.execShellCmd(fmt"nim c -d=release --cc:gcc --opt:size --passL:-s -d=mingw --hints=on --app=console --cpu=amd64 --hint[Pattern]:off --out={outfile} stub.nim")
+            discard os.execShellCmd(fmt"nim c --maxLoopIterationsVM:number 100000000 -d=release --cc:gcc --opt:size --passL:-s -d=mingw --hints=on --app=console --cpu=amd64 --hint[Pattern]:off --out={outfile} stub.nim")
         else:
             echo "[+] Using LLVM-Obfuscator to compile"
             var result = execCmdEx("x86_64-w64-mingw32-clang -v")
@@ -732,12 +732,12 @@ when defined(windows):
                 let ochars = {'A'..'Z','0'..'9'}
                 var aesSeed = collect(newSeq, (for i in 0..<32: ochars.sample)).join
                 #Feel free to modify the Obfuscator-LLVM flags in the command below to fit your needs.
-                discard os.execShellCmd(fmt"nim c -d=release --cc:clang --opt:size --passL:-s --passC:'-mllvm -bcf -mllvm -sub -mllvm -fla -mllvm -split -aesSeed={aesSeed}' -d=mingw --hints=on --app=console --cpu=amd64 --hint[Pattern]:off --out={outfile} stub.nim")
+                discard os.execShellCmd(fmt"nim c --maxLoopIterationsVM:number 100000000 -d=release --cc:clang --opt:size --passL:-s --passC:'-mllvm -bcf -mllvm -sub -mllvm -fla -mllvm -split -aesSeed={aesSeed}' -d=mingw --hints=on --app=console --cpu=amd64 --hint[Pattern]:off --out={outfile} stub.nim")
             else:
                 echo "[!] Obfuscator-LLVM or wclang not installed or in path! Ensure that you can run 'x86_64-w64-mingw32-clang -v' and it shows 'Obfuscator-LLVM'."
     else:
         if llvm_obfuscator == false:
-            discard os.execShellCmd(fmt"nim c -d=release --cc:gcc --opt:size --passL:-s -d=mingw --hints=on --app=gui --cpu=amd64 --hint[Pattern]:off --out={outfile} stub.nim")
+            discard os.execShellCmd(fmt"nim c --maxLoopIterationsVM:number 100000000 -d=release --cc:gcc --opt:size --passL:-s -d=mingw --hints=on --app=gui --cpu=amd64 --hint[Pattern]:off --out={outfile} stub.nim")
         else:
             echo "[+] Using Obfuscator-LLVM to compile"
             var result = execCmdEx("x86_64-w64-mingw32-clang -v")
@@ -745,7 +745,7 @@ when defined(windows):
                 let ochars = {'A'..'Z','0'..'9'}
                 var aesSeed = collect(newSeq, (for i in 0..<32: ochars.sample)).join
                 #Feel free to modify the Obfuscator-LLVM flags in the command below to fit your needs.
-                discard os.execShellCmd(fmt"nim c -d=release --cc:clang --opt:size --passL:-s --passC:'-mllvm -bcf -mllvm -sub -mllvm -fla -mllvm -split -aesSeed={aesSeed}' -d=mingw --hints=on --app=gui --cpu=amd64 --hint[Pattern]:off --out={outfile} stub.nim")
+                discard os.execShellCmd(fmt"nim c --maxLoopIterationsVM:number 100000000 -d=release --cc:clang --opt:size --passL:-s --passC:'-mllvm -bcf -mllvm -sub -mllvm -fla -mllvm -split -aesSeed={aesSeed}' -d=mingw --hints=on --app=gui --cpu=amd64 --hint[Pattern]:off --out={outfile} stub.nim")
             else:
                 echo "[!] Obfuscator-LLVM or wclang not installed or in path! Ensure that you can run 'x86_64-w64-mingw32-clang -v' and it shows 'Obfuscator-LLVM'."
     discard os.execShellCmd("rm syscalls2.nim")
@@ -876,7 +876,7 @@ assembly.EntryPoint.Invoke(nil, toCLRVariant([arr]))
     if os.fileExists(outfile) == true:
         discard os.execShellCmd(fmt"rm {outfile}")
     if llvm_obfuscator == false:
-        discard os.execShellCmd(fmt"nim c -d=release --cc:gcc --opt:size --passL:-s -d=mingw --hints=on --app=console --cpu=amd64 --hint[Pattern]:off --out={outfile} stub.nim")
+        discard os.execShellCmd(fmt"nim c --maxLoopIterationsVM:number 100000000 -d=release --cc:gcc --opt:size --passL:-s -d=mingw --hints=on --app=console --cpu=amd64 --hint[Pattern]:off --out={outfile} stub.nim")
     else:
         echo "[+] Using Obfuscator-LLVM to compile"
         var result = execCmdEx("x86_64-w64-mingw32-clang -v")
@@ -884,7 +884,7 @@ assembly.EntryPoint.Invoke(nil, toCLRVariant([arr]))
             let ochars = {'A'..'Z','0'..'9'}
             var aesSeed = collect(newSeq, (for i in 0..<32: ochars.sample)).join
             #Feel free to modify the Obfuscator-LLVM flags in the command below to fit your needs.
-            discard os.execShellCmd(fmt"nim c -d=release --cc:clang --opt:size --passL:-s --passC:'-mllvm -bcf -mllvm -sub -mllvm -fla -mllvm -split -aesSeed={aesSeed}' -d=mingw --hints=on --app=console --cpu=amd64 --hint[Pattern]:off --out={outfile} stub.nim")
+            discard os.execShellCmd(fmt"nim c --maxLoopIterationsVM:number 100000000 -d=release --cc:clang --opt:size --passL:-s --passC:'-mllvm -bcf -mllvm -sub -mllvm -fla -mllvm -split -aesSeed={aesSeed}' -d=mingw --hints=on --app=console --cpu=amd64 --hint[Pattern]:off --out={outfile} stub.nim")
         else:
             echo "[!] Obfuscator-LLVM or wclang not installed or in path! Ensure that you can run 'x86_64-w64-mingw32-clang -v' and it shows 'Obfuscator-LLVM'."
     discard os.execShellCmd("rm syscalls2.nim")
@@ -1226,7 +1226,7 @@ status = NtWaitForSingleObject(hThread, TRUE, NULL)
     if os.fileExists(outfile) == true:
         discard os.execShellCmd(fmt"rm {outfile}")
     if llvm_obfuscator == false:
-        discard os.execShellCmd(fmt"nim c -d=release --cc:gcc --opt:size --passL:-s -d=mingw --hints=on --app=console --cpu=amd64 --hint[Pattern]:off --out={outfile} stub.nim")
+        discard os.execShellCmd(fmt"nim c --maxLoopIterationsVM:number 100000000 -d=release --cc:gcc --opt:size --passL:-s -d=mingw --hints=on --app=console --cpu=amd64 --hint[Pattern]:off --out={outfile} stub.nim")
     else:
         echo "[+] Using Obfuscator-LLVM to compile"
         var result = execCmdEx("x86_64-w64-mingw32-clang -v")
@@ -1234,7 +1234,7 @@ status = NtWaitForSingleObject(hThread, TRUE, NULL)
             let ochars = {'A'..'Z','0'..'9'}
             var aesSeed = collect(newSeq, (for i in 0..<32: ochars.sample)).join
             #Feel free to modify the Obfuscator-LLVM flags in the command below to fit your needs.
-            discard os.execShellCmd(fmt"nim c -d=release --cc:clang --opt:size --passL:-s --passC:'-mllvm -bcf -mllvm -sub -mllvm -fla -mllvm -split -aesSeed={aesSeed}' -d=mingw --hints=on --app=console --cpu=amd64 --hint[Pattern]:off --out={outfile} stub.nim")
+            discard os.execShellCmd(fmt"nim c --maxLoopIterationsVM:number 100000000 -d=release --cc:clang --opt:size --passL:-s --passC:'-mllvm -bcf -mllvm -sub -mllvm -fla -mllvm -split -aesSeed={aesSeed}' -d=mingw --hints=on --app=console --cpu=amd64 --hint[Pattern]:off --out={outfile} stub.nim")
         else:
             echo "[!] Obfuscator-LLVM or wclang not installed or in path! Ensure that you can run 'x86_64-w64-mingw32-clang -v' and it shows 'Obfuscator-LLVM'."
     discard os.execShellCmd("rm syscalls2.nim")

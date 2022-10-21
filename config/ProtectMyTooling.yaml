@@ -14,7 +14,7 @@ enable_av_command: 'powershell.exe -c "Set-MpPreference -DisableRealtimeMonitori
 # Preset packers chain in GUI upon input file open.
 #
 gui_default_chain_pe: upx
-gui_default_chain_dotnet: confuserex
+gui_default_chain_dotnet: netreactor
 gui_default_chain_shellcode: sgn
 
 
@@ -49,6 +49,7 @@ backdoor_path:
 backdoor_save: 1
 backdoor_run: 1
 backdoor_args:
+backdoor_file: 
 
 #
 # peresed
@@ -99,6 +100,15 @@ mangle_certificate: 'contrib\\Mangle\\signed-executables\\WINWORD.EXE'
 mpress_path: "contrib\\MPRESS\\mpress.exe"
 
 #
+# netreactor
+#
+netreactor_path: "C:\\Program Files (x86)\\Eziriz\\.NET Reactor\\dotNET_Reactor.exe"
+netreactor_args:
+netreactor_project_file: "contrib\\_project-files\\netreactor-projects\\net-reactor-full1.nrproj"
+netreactor_public_types_internalization: 1
+netreactor_obfuscate_public_types: 1
+
+#
 # NimPackt-v1
 #
 nimpackt_path: "contrib\\NimPackt-v1\\NimPackt.py"
@@ -139,8 +149,8 @@ nimsyscall_args:
 #
 # ScareCrow
 #
-scarecrow_path: "contrib\\ScareCrow\\ScareCrow.exe"
-scarecrow_args: 
+scarecrow_path: "contrib\\ScareCrow\\ScareCrow"
+scarecrow_args: ["-console"]
 scarecrow_loader:
 scarecrow_domain:
 scarecrow_valid:
@@ -148,6 +158,7 @@ scarecrow_password:
 scarecrow_inject:
 scarecrow_sandbox: False
 scarecrow_sign: False
+
 
 #
 # pe2shc

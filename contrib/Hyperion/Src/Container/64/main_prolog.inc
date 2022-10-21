@@ -1,1 +1,1 @@
-format PE64 GUI 5.0 at IMAGE_BASE
+format PE64 console 5.0 at IMAGE_BASE

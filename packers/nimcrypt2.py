@@ -94,7 +94,7 @@ class PackerNimcrypt2(IPacker):
         cwd = ''
 
         try:
-            ver = shell(self.logger, 'nim --version').split('\n')[0].strip()
+            ver = shell(self.logger, "{} --version".format(self.options['nimcrypt2_path'])).split('\n')[0].strip()
 
             cwd = os.getcwd()
             base = os.path.dirname(self.options['nimcrypt2_path'])
@@ -150,7 +150,8 @@ class PackerNimcrypt2(IPacker):
                 infile,
                 outfile
             )
-
+            print("CMDDDDDDDDDDDDDDDDDDDDD: {}".format(cmd))
+            print("PATHHHHHHHHHHHHHHHHHHHHHHHHH: {}".format(os.getcwd()))
             out = shell(self.logger, cmd,
                         output=self.options['verbose'] or self.options['debug'],
                         timeout=self.options['timeout'])

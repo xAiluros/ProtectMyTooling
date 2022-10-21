@@ -86,14 +86,15 @@ class PackerScareCrow(IPacker):
 
             if len(self.options['scarecrow_path']) > 0:
                 scarePath = os.path.dirname(self.options['scarecrow_path'])
+        
 
     @ensureInputFileIsShellcode
     def process(self, arch, infile, outfile):
         cwd = ''
         try:
-            if arch != 'x64':
-                self.logger.fatal(
-                    'ScareCrow works only with x64 shellcodes. Make sure your shellcode file contains "64" in name or use "-a 64" parameter.')
+            #if arch != 'x64':
+            #    self.logger.fatal(
+            #        'ScareCrow works only with x64 shellcodes. Make sure your shellcode file contains "64" in name or use "-a 64" parameter.')
 
             loader = ''
 
@@ -110,31 +111,28 @@ class PackerScareCrow(IPacker):
                         'When using ScareCrow -Loader different than binary/dll output file must have .js/.hta extension!')
 
             if self.options['scarecrow_sandbox']:
-                self.scarecrow_args += ' -sandbox'
+                self.scarecrow_args.append(" -sandbox")
             if len(self.options['scarecrow_inject']) > 0:
-                self.scarecrow_args += f' -injection "{self.options["scarecrow_inject"]}"'
+                self.scarecrow_args.append(" -injection \"{}\"".format(self.options["scarecrow_inject"]))
 
             if len(self.options['scarecrow_valid']) > 0:
-                self.scarecrow_args += ' -valid ' + \
-                    self.options['scarecrow_valid']
-                self.scarecrow_args += f' -password "{self.options["scarecrow_password"]}"'
+                self.scarecrow_args.append(" -valid ".format(self.options['scarecrow_valid']))
+                self.scarecrow_args.append(" -password \"{}\"".format(self.options["scarecrow_password"]))
                 self.options['scarecrow_sign'] = True
 
             elif len(self.options['scarecrow_domain']) > 0:
-                self.scarecrow_args += ' -domain ' + \
-                    self.options['scarecrow_domain']
+                self.scarecrow_args.append(" -domain {}".format(self.options['scarecrow_domain']))
                 self.options['scarecrow_sign'] = True
 
             if not self.options['scarecrow_sign']:
-                self.scarecrow_args += ' -nosign'
-
+                self.scarecrow_args.append(" -nosign")
             outPath = os.path.dirname(outfile)
             outName = os.path.basename(outfile)
 
-            self.scarecrow_args += f' -O "{outName}" -outpath "{outPath}"'
+            self.scarecrow_args.append(f' -O "{outName}" -outpath "{outPath}"')
 
             if len(loader) > 0:
-                self.scarecrow_args += f' -Loader {loader}'
+                self.scarecrow_args.append(f' -Loader {loader}')
 
             cwd = os.getcwd()
             base = os.path.dirname(self.options['scarecrow_path'])

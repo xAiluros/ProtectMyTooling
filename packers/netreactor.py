@@ -12,7 +12,7 @@ from lib.utils import *
 
 class PackerNetReactor(IPacker):
     default_netreactor_args = ''
-    netreactor_cmdline_template = '<command> <options> -file <infile>'
+    netreactor_cmdline_template = '<command> <options> -file <infile> -targetfile <outfile>'
 
     metadata = {
         'author': 'Eziriz',
@@ -122,7 +122,6 @@ class PackerNetReactor(IPacker):
         else:
             if not self.options['config']:
                 self.logger.fatal('Config file not specified!')
-
             self.options['netreactor_path'] = configPath(
                 self.options['config'], self.options['netreactor_path'])
             self.options['netreactor_project_file'] = os.path.abspath(configPath(
@@ -137,7 +136,7 @@ class PackerNetReactor(IPacker):
                 self.netreactor_args += ' ' + self.options['netreactor_args']
 
             for k, v in PackerNetReactor.default_options.items():
-                if k not in self.options.keys() or not self.options[k]:
+                if k not in self.options.keys() or not self.options[k] and not isinstance(self.options[k], int):
                     self.options[k] = v
 
             optionsMap = {
@@ -149,6 +148,7 @@ class PackerNetReactor(IPacker):
                 'netreactor_incremental_obfuscation': 'incremental_obfuscation',
                 'netreactor_unprintable_characters': 'unprintable_characters',
                 'netreactor_obfuscate_public_types': 'obfuscate_public_types',
+                'netreactor_public_types_internalization': 'public_types_internalization',
                 'netreactor_anti_ildasm': 'suppressildasm',
                 'netreactor_native_exe': 'nativeexe',
                 'netreactor_prejit': 'prejit',
@@ -162,7 +162,6 @@ class PackerNetReactor(IPacker):
 
     def adjustProjectFile(self, projFile, infile, outfile):
         baseProject = ''
-
         with open(self.options['netreactor_project_file'], 'r', encoding='utf-8', errors='ignore') as f:
             baseProject = f.read().strip()
 
@@ -221,7 +220,6 @@ Adjusted project file:
 
             self.logger.dbg('changed working directory to "{}"'.format(base))
             os.chdir(base)
-
             assemblyName = getClrAssemblyName(infile)
             if not assemblyName:
                 self.logger.err(
@@ -231,32 +229,23 @@ Adjusted project file:
             self.logger.info(
                 "Running .NET Reactor on assembly {}, be patient...".format(assemblyName))
 
-            generatedOutfile = '{}\\{}_Secure\\{}'.format(
-                os.path.dirname(infile),
-                assemblyName,
-                os.path.basename(infile)
-            )
+            generatedOutfile = outfile
 
             with tempfile.NamedTemporaryFile(delete=False, suffix='.nrproj') as fp:
                 self.adjustProjectFile(fp, infile, outfile)
                 tmpname = fp.name
-
             out = shell(self.logger, IPacker.build_cmdline(
                 PackerNetReactor.netreactor_cmdline_template,
                 os.path.basename(self.options['netreactor_path']),
                 self.netreactor_args + ' -project "{}"'.format(fp.name),
                 infile,
+                outfile,
                 ''
             ), output=self.options['verbose'] or self.options['debug'], timeout=self.options['timeout'])
 
-            status = (' - Successfully Protected!' in out)
+            status = ('error' not in out.lower())
 
-            if status and os.path.isfile(generatedOutfile):
-                self.logger.dbg(
-                    'Moving file from auto-generated output location: "{}"'.format(generatedOutfile))
-                shutil.move(generatedOutfile, outfile)
-                shutil.rmtree(os.path.dirname(generatedOutfile))
-            else:
+            if not status or not os.path.isfile(outfile):
                 status = False
                 self.logger.err(
                     'Something went wrong and we couldn\'t find generated output file ({})!'.format(generatedOutfile))
